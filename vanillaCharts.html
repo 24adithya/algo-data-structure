@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Candlestick Chart</title>
+        <!-- Include Chart.js library -->
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    </head>
+
+    <body>
+        <!-- Create a canvas element to render the chart -->
+        <canvas id="candlestickChart" width="800" height="400"></canvas>
+
+        <script>
+    // Sample data for the candlestick chart
+    const data = [
+      { t: '2022-01-01', o: 50, h: 70, l: 40, c: 60 },
+      { t: '2022-01-02', o: 60, h: 80, l: 50, c: 70 },
+      { t: '2022-01-03', o: 70, h: 90, l: 60, c: 80 }
+      // Add more data points as needed
+    ];
+
+    // Extract data for Chart.js
+    const chartData = data.map(({ t, o, h, l, c }) => ({ t, o, h, l, c }));
+
+    // Get the canvas element
+    const ctx = document.getElementById('candlestickChart').getContext('2d');
+
+    // Create a new candlestick chart
+    const candlestickChart = new Chart(ctx, {
+      type: 'candlestick',
+      data: {
+        datasets: [
+          {
+            label: 'Candlestick Chart',
+            data: chartData
+          }
+        ]
+      }
+    });
+  </script>
+    </body>
+
+</html>
