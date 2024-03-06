@@ -1,7 +1,8 @@
-function Node(data) {
+function Node(data, height = 1) {
   this.data = data;
   this.rightChild = undefined;
   this.leftChild = undefined;
+  this.height = height;
 }
 
 function AVLTree() {
@@ -24,6 +25,17 @@ function AVLTree() {
       node.rightChild = insertNode(node.rightChild, data);
     }
 
+    node.height = nodeHeight(node);
+
+    if (balanceFactor(node) === 2 && balanceFactor(node.leftChild) === 1) {
+      return LLRotation(node);
+    } else if (
+      balanceFactor(node) === 2 &&
+      balanceFactor(node.leftChild) === -1
+    ) {
+      return LRRotation(node);
+    }
+
     return node;
   };
 
@@ -42,6 +54,72 @@ function AVLTree() {
     return result;
   }
 
+  const nodeHeight = node => {
+    let nodeLeftTreeHeight = 0,
+      nodeRightTreeHeight = 0;
+
+    if (node && node.leftChild) nodeLeftTreeHeight = node.leftChild.height;
+    if (node && node.rightChild) nodeRightTreeHeight = node.rightChild.height;
+
+    return nodeLeftTreeHeight > nodeRightTreeHeight
+      ? nodeLeftTreeHeight + 1
+      : nodeRightTreeHeight + 1;
+  };
+
+  const balanceFactor = node => {
+    let nodeLeftTreeHeight = 0,
+      nodeRightTreeHeight = 0;
+
+    if (node && node.leftChild) nodeLeftTreeHeight = node.leftChild.height;
+    if (node && node.rightChild) nodeRightTreeHeight = node.rightChild.height;
+
+    return nodeLeftTreeHeight - nodeRightTreeHeight;
+  };
+
+  const LLRotation = node => {
+    const nodeLeftChild = node.leftChild;
+    const nodeLeftChildRightChild = nodeLeftChild.rightChild;
+
+    nodeLeftChild.rightChild = node;
+    node.leftChild = nodeLeftChildRightChild;
+
+    node.height = nodeHeight(node);
+    nodeLeftChild.height = nodeHeight(nodeLeftChild);
+
+    if (this.root === node) {
+      this.root = nodeLeftChild;
+    }
+
+    return nodeLeftChild;
+  };
+
+  const LRRotation = node => {
+    const nodeLeftChild = node.leftChild;
+    const nodeLeftChildRightChild = nodeLeftChild.rightChild;
+    const nodeLeftChildRightChildLeftChild = nodeLeftChildRightChild.leftChild;
+    const nodeLeftChildRightChildRightChild =
+      nodeLeftChildRightChild.rightChild;
+
+    nodeLeftChildRightChild.leftChild = nodeLeftChild;
+    nodeLeftChildRightChild.rightChild = node;
+
+    nodeLeftChild.rightChild = nodeLeftChildRightChildLeftChild;
+    node.leftChild = nodeLeftChildRightChildRightChild;
+
+    nodeLeftChildRightChild.leftChild = nodeLeftChild;
+    nodeLeftChildRightChild.rightChild = node;
+
+    node.height = nodeHeight(node);
+    nodeLeftChild.height = nodeHeight(nodeLeftChild);
+    nodeLeftChildRightChild.height = nodeHeight(nodeLeftChildRightChild);
+
+    if (this.root === node) {
+      this.root = nodeLeftChild;
+    }
+
+    return nodeLeftChildRightChild;
+  };
+
   this.insert = function (data) {
     this.root = insertNode(this.root, data);
   };
@@ -52,8 +130,16 @@ function AVLTree() {
   };
 }
 
-const avlTree = new AVLTree();
-avlTree.insert(10);
-avlTree.insert(5);
-avlTree.insert(2);
-avlTree.display();
+const avlTreeLL = new AVLTree();
+avlTreeLL.insert(10);
+avlTreeLL.insert(5);
+avlTreeLL.insert(2);
+avlTreeLL.display();
+
+const avlTreeLR = new AVLTree();
+avlTreeLR.insert(10);
+avlTreeLR.insert(5);
+avlTreeLR.insert(8);
+avlTreeLR.insert(7);
+avlTreeLR.insert(9);
+avlTreeLR.display();
