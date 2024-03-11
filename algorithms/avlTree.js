@@ -169,8 +169,73 @@ function AVLTree() {
     return nodeRightChildLeftChild;
   };
 
+  const height = node => {
+    let leftSubTreeHeight = 0,
+      rightSubTreeHeight = 0;
+
+    leftSubTreeHeight = node?.leftChild ? node?.leftChild.height : 0;
+    rightSubTreeHeight = node?.rightChild ? node?.rightChild.height : 0;
+
+    return leftSubTreeHeight > rightSubTreeHeight
+      ? leftSubTreeHeight + 1
+      : rightSubTreeHeight + 1;
+  };
+
+  const inorderPredecessor = node => {
+    if (node && node.rightChild) {
+      node = node.rightChild;
+    }
+
+    return node;
+  };
+
+  const inorderSuccessor = node => {
+    if (node && node.leftChild) {
+      node = node.leftChild;
+    }
+
+    return node;
+  };
+
+  const deleteNode = (node, key) => {
+    if (!node) {
+      return;
+    }
+
+    //leaf node
+    if (node.data === key && !node.leftChild && !node.rightChild) {
+      if (node === this.root) {
+        this.root = undefined;
+      }
+      return;
+    }
+
+    if (key < node.data) {
+      node.leftChild = deleteNode(node.leftChild, key);
+    } else if (key > node.data) {
+      node.rightChild = deleteNode(node.rightChild, key);
+    } else {
+      let newRoot;
+      if (height(node.leftChild) > height(node.rightChild)) {
+        newRoot = inorderPredecessor(node.leftChild);
+        node.data = newRoot.data;
+        node.leftChild = deleteNode(node.leftChild, newRoot.data);
+      } else {
+        newRoot = inorderSuccessor(node.rightChild);
+        node.data = newRoot.data;
+        node.rightChild = deleteNode(node.rightChild, newRoot.data);
+      }
+    }
+
+    return node;
+  };
+
   this.insert = function (data) {
     this.root = insertNode(this.root, data);
+  };
+
+  this.delete = function (key) {
+    deleteNode(this.root, key);
   };
 
   this.display = function () {
@@ -205,4 +270,8 @@ avlTreeRL.insert(18);
 avlTreeRL.insert(15);
 avlTreeRL.insert(13);
 avlTreeRL.insert(14);
+avlTreeRL.display();
+avlTreeRL.delete(13);
+avlTreeRL.display();
+avlTreeRL.delete(19);
 avlTreeRL.display();
