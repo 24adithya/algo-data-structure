@@ -138,7 +138,7 @@ function AVLTree() {
     nodeLeftChildRightChild.height = nodeHeight(nodeLeftChildRightChild);
 
     if (this.root === node) {
-      this.root = nodeLeftChild;
+      this.root = nodeLeftChildRightChild;
     }
 
     return nodeLeftChildRightChild;
@@ -197,6 +197,89 @@ function AVLTree() {
     return node;
   };
 
+  const L1Rotation = node => {
+    const nodeLeftChild = node.leftChild;
+    const nodeLeftChildRightChild = nodeLeftChild.rightChild;
+
+    nodeLeftChild.rightChild = node;
+    node.leftChild = nodeLeftChildRightChild;
+
+    node.height = nodeHeight(node);
+    nodeLeftChild.height = nodeHeight(nodeLeftChild);
+
+    if (this.root === node) {
+      this.root = nodeLeftChild;
+    }
+
+    return nodeLeftChild;
+  };
+
+  const R1Rotation = node => {
+    const nodeRightChild = node.rightChild;
+    const nodeRightChildLeftChild = nodeRightChild.leftChild;
+
+    nodeRightChild.leftChild = node;
+    node.rightChild = nodeRightChildLeftChild;
+
+    node.height = nodeHeight(node);
+    nodeRightChild.height = nodeHeight(nodeRightChild);
+
+    if (this.root === node) {
+      this.root = nodeRightChild;
+    }
+
+    return nodeRightChild;
+  };
+
+  const L_1Rotation = node => {
+    const nodeLeftChild = node.leftChild;
+    const nodeLeftChildRightChild = nodeLeftChild.rightChild;
+    const nodeLeftChildRightChildLeftChild = nodeLeftChildRightChild.leftChild;
+    const nodeLeftChildRightChildRightChild =
+      nodeLeftChildRightChild.rightChild;
+
+    nodeLeftChildRightChild.leftChild = nodeLeftChild;
+    nodeLeftChildRightChild.rightChild = node;
+
+    nodeLeftChild.rightChild = nodeLeftChildRightChildLeftChild;
+    node.leftChild = nodeLeftChildRightChildRightChild;
+
+    node.height = nodeHeight(node);
+    nodeLeftChild.height = nodeHeight(nodeLeftChild);
+    nodeLeftChildRightChild.height = nodeHeight(nodeLeftChildRightChild);
+
+    if (this.root === node) {
+      this.root = nodeLeftChildRightChild;
+    }
+
+    return nodeLeftChildRightChild;
+  };
+
+  const R_1Rotation = node => {
+    const nodeRightChild = node.rightChild;
+    const nodeRightChildLeftChild = nodeRightChild.leftChild;
+    const nodeRightChildLeftChildLeftChild = nodeRightChildLeftChild.leftChild;
+    const nodeRightChildLeftChildRightChild =
+      nodeRightChildLeftChild.rightChild;
+
+    node.rightChild = nodeRightChildLeftChildLeftChild;
+    nodeRightChild.leftChild = nodeRightChildLeftChildRightChild;
+
+    // Set new root's left and right children
+    nodeRightChildLeftChild.leftChild = node;
+    nodeRightChildLeftChild.rightChild = nodeRightChild;
+
+    node.height = nodeHeight(node);
+    nodeRightChild.height = nodeHeight(nodeRightChild);
+    nodeRightChildLeftChild.height = nodeHeight(nodeRightChildLeftChild);
+
+    if (this.root === node) {
+      this.root = nodeRightChildLeftChild;
+    }
+
+    return nodeRightChildLeftChild;
+  };
+
   const deleteNode = (node, key) => {
     if (!node) {
       return;
@@ -227,6 +310,41 @@ function AVLTree() {
       }
     }
 
+    if (balanceFactor(node) === 2 && balanceFactor(node.leftChild) === 1) {
+      return L1Rotation(node); //same as LLRotation
+    } else if (
+      //same as LRRotation
+      balanceFactor(node) === 2 &&
+      balanceFactor(node.leftChild) === -1
+    ) {
+      return L_1Rotation(node);
+    } else if (
+      //can do either L1Rotation or L_1Rotation
+      balanceFactor(node) === 2 &&
+      balanceFactor(node.leftChild) === 0
+    ) {
+      //we are going with L1Rotation
+      return L1Rotation(node);
+    } else if (
+      balanceFactor(node) === -2 &&
+      balanceFactor(node.rightChild) === -1
+    ) {
+      return R1Rotation(node); //same as RRRotation
+    } else if (
+      //same as RLRotation
+      balanceFactor(node) === -2 &&
+      balanceFactor(node.rightChild) === 1
+    ) {
+      return R_1Rotation(node);
+    } else if (
+      //can do either R1Rotation or R_1Rotation
+      balanceFactor(node) === -2 &&
+      balanceFactor(node.rightChild) === 0
+    ) {
+      //we are going with R1Rotation
+      return R1Rotation(node);
+    }
+
     return node;
   };
 
@@ -235,7 +353,7 @@ function AVLTree() {
   };
 
   this.delete = function (key) {
-    deleteNode(this.root, key);
+    this.root = deleteNode(this.root, key);
   };
 
   this.display = function () {
@@ -275,3 +393,53 @@ avlTreeRL.delete(13);
 avlTreeRL.display();
 avlTreeRL.delete(19);
 avlTreeRL.display();
+
+const avlTreeL1 = new AVLTree();
+avlTreeL1.insert(30);
+avlTreeL1.insert(20);
+avlTreeL1.insert(40);
+avlTreeL1.insert(10);
+avlTreeL1.delete(40);
+avlTreeL1.display();
+
+const avlTreeL_1 = new AVLTree();
+avlTreeL_1.insert(30);
+avlTreeL_1.insert(40);
+avlTreeL_1.insert(10);
+avlTreeL_1.insert(20);
+avlTreeL_1.delete(40);
+avlTreeL_1.display();
+
+const avlTreeL1orL_1 = new AVLTree();
+avlTreeL1orL_1.insert(30);
+avlTreeL1orL_1.insert(40);
+avlTreeL1orL_1.insert(10);
+avlTreeL1orL_1.insert(20);
+avlTreeL1orL_1.insert(5);
+avlTreeL1orL_1.delete(40);
+avlTreeL1orL_1.display();
+
+const avlTreeR1 = new AVLTree();
+avlTreeR1.insert(30);
+avlTreeR1.insert(20);
+avlTreeR1.insert(40);
+avlTreeR1.insert(50);
+avlTreeR1.delete(20);
+avlTreeR1.display();
+
+const avlTreeR_1 = new AVLTree();
+avlTreeR_1.insert(30);
+avlTreeR_1.insert(20);
+avlTreeR_1.insert(40);
+avlTreeR_1.insert(35);
+avlTreeR_1.delete(20);
+avlTreeR_1.display();
+
+const avlTreeR1orR_1 = new AVLTree();
+avlTreeR1orR_1.insert(30);
+avlTreeR1orR_1.insert(20);
+avlTreeR1orR_1.insert(40);
+avlTreeR1orR_1.insert(35);
+avlTreeR1orR_1.insert(50);
+avlTreeR1orR_1.delete(20);
+avlTreeR1orR_1.display();
